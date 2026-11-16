@@ -1,0 +1,1186 @@
+{
+  "date": "2026-11-14",
+  "method": "Desktop browser iframe viewport checks; not physical devices",
+  "pages": [
+    {
+      "route": "home",
+      "width": "320",
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "home",
+      "width": "390",
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "home",
+      "width": "768",
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "home",
+      "width": "1024",
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "home",
+      "width": "1440",
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "shop",
+      "width": "320",
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "shop",
+      "width": "390",
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "shop",
+      "width": "768",
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "shop",
+      "width": "1024",
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "shop",
+      "width": "1440",
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "wishlist",
+      "width": "320",
+      "heading": "สิ่งดี ๆ ที่คุณเก็บไว้",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "wishlist",
+      "width": "390",
+      "heading": "สิ่งดี ๆ ที่คุณเก็บไว้",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "wishlist",
+      "width": "768",
+      "heading": "สิ่งดี ๆ ที่คุณเก็บไว้",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "wishlist",
+      "width": "1024",
+      "heading": "สิ่งดี ๆ ที่คุณเก็บไว้",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "wishlist",
+      "width": "1440",
+      "heading": "สิ่งดี ๆ ที่คุณเก็บไว้",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "orders",
+      "width": "320",
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "orders",
+      "width": "390",
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "orders",
+      "width": "768",
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "orders",
+      "width": "1024",
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "orders",
+      "width": "1440",
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "account",
+      "width": "320",
+      "heading": "สวัสดี Prim",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "account",
+      "width": "390",
+      "heading": "สวัสดี Prim",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "account",
+      "width": "768",
+      "heading": "สวัสดี Prim",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "account",
+      "width": "1024",
+      "heading": "สวัสดี Prim",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "account",
+      "width": "1440",
+      "heading": "สวัสดี Prim",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "apply",
+      "width": "320",
+      "heading": "ให้ร้านของคุณเติบโตไปกับเรา",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "apply",
+      "width": "390",
+      "heading": "ให้ร้านของคุณเติบโตไปกับเรา",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "apply",
+      "width": "768",
+      "heading": "ให้ร้านของคุณเติบโตไปกับเรา",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "apply",
+      "width": "1024",
+      "heading": "ให้ร้านของคุณเติบโตไปกับเรา",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "apply",
+      "width": "1440",
+      "heading": "ให้ร้านของคุณเติบโตไปกับเรา",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "store?shop=s1",
+      "width": "320",
+      "heading": "Bloom Official",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "store?shop=s1",
+      "width": "390",
+      "heading": "Bloom Official",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "store?shop=s1",
+      "width": "768",
+      "heading": "Bloom Official",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "store?shop=s1",
+      "width": "1024",
+      "heading": "Bloom Official",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "store?shop=s1",
+      "width": "1440",
+      "heading": "Bloom Official",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "nutrition",
+      "width": "320",
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "nutrition",
+      "width": "390",
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "nutrition",
+      "width": "768",
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "nutrition",
+      "width": "1024",
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "nutrition",
+      "width": "1440",
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "exercise",
+      "width": "320",
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "exercise",
+      "width": "390",
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "exercise",
+      "width": "768",
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "exercise",
+      "width": "1024",
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "exercise",
+      "width": "1440",
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "articles",
+      "width": "320",
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "articles",
+      "width": "390",
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "articles",
+      "width": "768",
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "articles",
+      "width": "1024",
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "route": "articles",
+      "width": "1440",
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin ภาพรวม",
+      "width": "320",
+      "heading": "ดูแลทุกการเติบโต.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin ภาพรวม",
+      "width": "390",
+      "heading": "ดูแลทุกการเติบโต.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin ภาพรวม",
+      "width": "768",
+      "heading": "ดูแลทุกการเติบโต.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin ภาพรวม",
+      "width": "1024",
+      "heading": "ดูแลทุกการเติบโต.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin ภาพรวม",
+      "width": "1440",
+      "heading": "ดูแลทุกการเติบโต.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin ร้านค้าและการอนุมัติ",
+      "width": "320",
+      "heading": "ร้านค้าและการอนุมัติ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin ร้านค้าและการอนุมัติ",
+      "width": "390",
+      "heading": "ร้านค้าและการอนุมัติ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin ร้านค้าและการอนุมัติ",
+      "width": "768",
+      "heading": "ร้านค้าและการอนุมัติ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin ร้านค้าและการอนุมัติ",
+      "width": "1024",
+      "heading": "ร้านค้าและการอนุมัติ.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin ร้านค้าและการอนุมัติ",
+      "width": "1440",
+      "heading": "ร้านค้าและการอนุมัติ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin สมาชิก",
+      "width": "320",
+      "heading": "สมาชิก.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin สมาชิก",
+      "width": "390",
+      "heading": "สมาชิก.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin สมาชิก",
+      "width": "768",
+      "heading": "สมาชิก.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin สมาชิก",
+      "width": "1024",
+      "heading": "สมาชิก.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin สมาชิก",
+      "width": "1440",
+      "heading": "สมาชิก.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin จัดการสินค้า",
+      "width": "320",
+      "heading": "จัดการสินค้า.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin จัดการสินค้า",
+      "width": "390",
+      "heading": "จัดการสินค้า.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin จัดการสินค้า",
+      "width": "768",
+      "heading": "จัดการสินค้า.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin จัดการสินค้า",
+      "width": "1024",
+      "heading": "จัดการสินค้า.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin จัดการสินค้า",
+      "width": "1440",
+      "heading": "จัดการสินค้า.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin คำสั่งซื้อ 1",
+      "width": "320",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin คำสั่งซื้อ 1",
+      "width": "390",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin คำสั่งซื้อ 1",
+      "width": "768",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin คำสั่งซื้อ 1",
+      "width": "1024",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin คำสั่งซื้อ 1",
+      "width": "1440",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin รายงานยอดขาย",
+      "width": "320",
+      "heading": "รายงานยอดขาย.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin รายงานยอดขาย",
+      "width": "390",
+      "heading": "รายงานยอดขาย.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin รายงานยอดขาย",
+      "width": "768",
+      "heading": "รายงานยอดขาย.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin รายงานยอดขาย",
+      "width": "1024",
+      "heading": "รายงานยอดขาย.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin รายงานยอดขาย",
+      "width": "1440",
+      "heading": "รายงานยอดขาย.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin รีวิวและคะแนน",
+      "width": "320",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin รีวิวและคะแนน",
+      "width": "390",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin รีวิวและคะแนน",
+      "width": "768",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin รีวิวและคะแนน",
+      "width": "1024",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin รีวิวและคะแนน",
+      "width": "1440",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin โปรโมชัน",
+      "width": "320",
+      "heading": "โปรโมชัน.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin โปรโมชัน",
+      "width": "390",
+      "heading": "โปรโมชัน.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin โปรโมชัน",
+      "width": "768",
+      "heading": "โปรโมชัน.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin โปรโมชัน",
+      "width": "1024",
+      "heading": "โปรโมชัน.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin โปรโมชัน",
+      "width": "1440",
+      "heading": "โปรโมชัน.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin ประวัติสต็อก",
+      "width": "320",
+      "heading": "ประวัติสต็อก.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin ประวัติสต็อก",
+      "width": "390",
+      "heading": "ประวัติสต็อก.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin ประวัติสต็อก",
+      "width": "768",
+      "heading": "ประวัติสต็อก.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin ประวัติสต็อก",
+      "width": "1024",
+      "heading": "ประวัติสต็อก.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin ประวัติสต็อก",
+      "width": "1440",
+      "heading": "ประวัติสต็อก.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin หมวดหมู่สินค้า",
+      "width": "320",
+      "heading": "หมวดหมู่สินค้า.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin หมวดหมู่สินค้า",
+      "width": "390",
+      "heading": "หมวดหมู่สินค้า.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin หมวดหมู่สินค้า",
+      "width": "768",
+      "heading": "หมวดหมู่สินค้า.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin หมวดหมู่สินค้า",
+      "width": "1024",
+      "heading": "หมวดหมู่สินค้า.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin หมวดหมู่สินค้า",
+      "width": "1440",
+      "heading": "หมวดหมู่สินค้า.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin เนื้อหาสุขภาพ",
+      "width": "320",
+      "heading": "เนื้อหาสุขภาพ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin เนื้อหาสุขภาพ",
+      "width": "390",
+      "heading": "เนื้อหาสุขภาพ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin เนื้อหาสุขภาพ",
+      "width": "768",
+      "heading": "เนื้อหาสุขภาพ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin เนื้อหาสุขภาพ",
+      "width": "1024",
+      "heading": "เนื้อหาสุขภาพ.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin เนื้อหาสุขภาพ",
+      "width": "1440",
+      "heading": "เนื้อหาสุขภาพ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin สถิติและประวัติระบบ",
+      "width": "320",
+      "heading": "สถิติและประวัติระบบ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin สถิติและประวัติระบบ",
+      "width": "390",
+      "heading": "สถิติและประวัติระบบ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin สถิติและประวัติระบบ",
+      "width": "768",
+      "heading": "สถิติและประวัติระบบ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin สถิติและประวัติระบบ",
+      "width": "1024",
+      "heading": "สถิติและประวัติระบบ.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin สถิติและประวัติระบบ",
+      "width": "1440",
+      "heading": "สถิติและประวัติระบบ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "admin ตั้งค่าเว็บไซต์",
+      "width": "320",
+      "heading": "ตั้งค่าเว็บไซต์.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "admin ตั้งค่าเว็บไซต์",
+      "width": "390",
+      "heading": "ตั้งค่าเว็บไซต์.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "admin ตั้งค่าเว็บไซต์",
+      "width": "768",
+      "heading": "ตั้งค่าเว็บไซต์.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "admin ตั้งค่าเว็บไซต์",
+      "width": "1024",
+      "heading": "ตั้งค่าเว็บไซต์.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "admin ตั้งค่าเว็บไซต์",
+      "width": "1440",
+      "heading": "ตั้งค่าเว็บไซต์.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller ภาพรวม",
+      "width": "320",
+      "heading": "ยินดีต้อนรับกลับมา.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller ภาพรวม",
+      "width": "390",
+      "heading": "ยินดีต้อนรับกลับมา.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller ภาพรวม",
+      "width": "768",
+      "heading": "ยินดีต้อนรับกลับมา.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller ภาพรวม",
+      "width": "1024",
+      "heading": "ยินดีต้อนรับกลับมา.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller ภาพรวม",
+      "width": "1440",
+      "heading": "ยินดีต้อนรับกลับมา.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller จัดการสินค้า",
+      "width": "320",
+      "heading": "จัดการสินค้า.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller จัดการสินค้า",
+      "width": "390",
+      "heading": "จัดการสินค้า.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller จัดการสินค้า",
+      "width": "768",
+      "heading": "จัดการสินค้า.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller จัดการสินค้า",
+      "width": "1024",
+      "heading": "จัดการสินค้า.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller จัดการสินค้า",
+      "width": "1440",
+      "heading": "จัดการสินค้า.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller คำสั่งซื้อ 1",
+      "width": "320",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller คำสั่งซื้อ 1",
+      "width": "390",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller คำสั่งซื้อ 1",
+      "width": "768",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller คำสั่งซื้อ 1",
+      "width": "1024",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller คำสั่งซื้อ 1",
+      "width": "1440",
+      "heading": "คำสั่งซื้อ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller รายงานยอดขาย",
+      "width": "320",
+      "heading": "รายงานยอดขาย.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller รายงานยอดขาย",
+      "width": "390",
+      "heading": "รายงานยอดขาย.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller รายงานยอดขาย",
+      "width": "768",
+      "heading": "รายงานยอดขาย.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller รายงานยอดขาย",
+      "width": "1024",
+      "heading": "รายงานยอดขาย.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller รายงานยอดขาย",
+      "width": "1440",
+      "heading": "รายงานยอดขาย.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller รีวิวและคะแนน",
+      "width": "320",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller รีวิวและคะแนน",
+      "width": "390",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller รีวิวและคะแนน",
+      "width": "768",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller รีวิวและคะแนน",
+      "width": "1024",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller รีวิวและคะแนน",
+      "width": "1440",
+      "heading": "รีวิวและคะแนน.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller โปรโมชัน",
+      "width": "320",
+      "heading": "โปรโมชัน.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller โปรโมชัน",
+      "width": "390",
+      "heading": "โปรโมชัน.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller โปรโมชัน",
+      "width": "768",
+      "heading": "โปรโมชัน.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller โปรโมชัน",
+      "width": "1024",
+      "heading": "โปรโมชัน.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller โปรโมชัน",
+      "width": "1440",
+      "heading": "โปรโมชัน.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller ประวัติสต็อก",
+      "width": "320",
+      "heading": "ประวัติสต็อก.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller ประวัติสต็อก",
+      "width": "390",
+      "heading": "ประวัติสต็อก.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller ประวัติสต็อก",
+      "width": "768",
+      "heading": "ประวัติสต็อก.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller ประวัติสต็อก",
+      "width": "1024",
+      "heading": "ประวัติสต็อก.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller ประวัติสต็อก",
+      "width": "1440",
+      "heading": "ประวัติสต็อก.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "view": "seller ข้อมูลร้านค้า",
+      "width": "320",
+      "heading": "ข้อมูลร้านค้า.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "view": "seller ข้อมูลร้านค้า",
+      "width": "390",
+      "heading": "ข้อมูลร้านค้า.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "view": "seller ข้อมูลร้านค้า",
+      "width": "768",
+      "heading": "ข้อมูลร้านค้า.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "view": "seller ข้อมูลร้านค้า",
+      "width": "1024",
+      "heading": "ข้อมูลร้านค้า.",
+      "inner": 1007,
+      "scroll": 1007
+    },
+    {
+      "view": "seller ข้อมูลร้านค้า",
+      "width": "1440",
+      "heading": "ข้อมูลร้านค้า.",
+      "inner": 1423,
+      "scroll": 1423
+    }
+  ],
+  "dialogs": {
+    "checkout": [
+      {
+        "view": "checkout",
+        "width": "320",
+        "inner": 279,
+        "scroll": 279
+      },
+      {
+        "view": "checkout",
+        "width": "390",
+        "inner": 349,
+        "scroll": 349
+      },
+      {
+        "view": "checkout",
+        "width": "768",
+        "inner": 691,
+        "scroll": 691
+      },
+      {
+        "view": "checkout",
+        "width": "1024",
+        "inner": 915,
+        "scroll": 915
+      }
+    ],
+    "productEditor": [
+      {
+        "view": "product editor",
+        "width": "320",
+        "fields": true,
+        "inner": 279,
+        "scroll": 279
+      },
+      {
+        "view": "product editor",
+        "width": "390",
+        "fields": true,
+        "inner": 349,
+        "scroll": 349
+      },
+      {
+        "view": "product editor",
+        "width": "768",
+        "fields": true,
+        "inner": 691,
+        "scroll": 691
+      }
+    ],
+    "mealEditor": [
+      {
+        "view": "meal editor",
+        "width": "320",
+        "inner": 279,
+        "scroll": 279
+      },
+      {
+        "view": "meal editor",
+        "width": "390",
+        "inner": 349,
+        "scroll": 349
+      },
+      {
+        "view": "meal editor",
+        "width": "768",
+        "inner": 691,
+        "scroll": 691
+      }
+    ],
+    "exerciseEditor": [
+      {
+        "view": "exercise editor",
+        "width": "320",
+        "inner": 279,
+        "scroll": 279
+      },
+      {
+        "view": "exercise editor",
+        "width": "390",
+        "inner": 349,
+        "scroll": 349
+      },
+      {
+        "view": "exercise editor",
+        "width": "768",
+        "inner": 691,
+        "scroll": 691
+      }
+    ]
+  },
+  "interactionChecks": {
+    "mobileFilterEscape": true,
+    "articleBrowserBack": true
+  }
+}

@@ -1,0 +1,12 @@
+ช่วยทำโครงการ Bloom Health & Wellness นี้ต่อ โดยอ่าน CLAUDE.md, START_HERE_TH.md, README.md, docs/FRONTEND_SCOPE.md และ docs/VERIFICATION.md ก่อนแก้โค้ด
+
+หน้าบ้าน React + TypeScript ทำไว้แล้ว ให้ต่อจากซอร์สนี้และคงธีมชมพู/หน้าตา/flow ที่ทำงานอยู่ รายละเอียดระบบให้ยึดคำอธิบายกับ Context Diagram ตามตารางใน docs/FRONTEND_SCOPE.md รูปธีมเป็นแค่สไตล์ ไม่ต้องเพิ่ม Face Analysis, AI Chat หรือฟีเจอร์ AI จากรูป
+
+ระบบประกอบด้วยลูกค้า ผู้ขาย และแอดมิน ผู้ขายยังซื้อสินค้าได้ มีการสมัครเปิดร้านและแอดมินอนุมัติ รวมทั้งสินค้า ตะกร้า สั่งซื้อ ชำระเงิน ติดตาม รีวิว โปรโมชัน รายงาน และเนื้อหาสุขภาพตาม requirement
+
+ตอนนี้เป็น frontend demo ใช้ localStorage ยังไม่มี backend จริง งานต่อไปให้ทำหลังบ้าน Node.js + TypeScript แล้วเชื่อมหน้าบ้านเดิมกับ API ให้ใช้ข้อมูลจากเซิร์ฟเวอร์ จัดการ authentication/authorization ฐานข้อมูล รูปภาพ สต็อก คูปอง คำสั่งซื้อ และสิทธิ์เจ้าของข้อมูลอย่างถูกต้อง กำหนด framework/database/provider ให้ชัดก่อนเริ่มใช้งาน โดยอย่าอ้างว่ามีค่าหรือ API ที่ยังไม่ได้ตั้งขึ้นจริง
+
+อ่าน src/types.ts, src/contentTypes.ts, src/actions.ts, src/domain.ts, src/store.tsx, src/persistence.ts และ src/wellnessState.ts เพื่อรักษาสัญญาข้อมูลและพฤติกรรมเดิม การตรวจสิทธิ์และการคำนวณยอด/สต็อก/คูปองต้องบังคับใช้บนเซิร์ฟเวอร์ และ checkout ต้องรองรับ transaction กับ idempotency
+
+เริ่มด้วย npm ci, npm test และ npm run build เพื่อดู baseline ก่อนแก้ แยกสิ่งที่ทำเสร็จแล้วกับงานที่ยังต้องทำ ตรวจ responsive และทดสอบ flow หลังแก้ อย่าอ้างว่าชำระเงินจริง เชื่อมขนส่ง หรือปลอดภัยระดับ production หากยังไม่ได้เชื่อมและตรวจจริง
+

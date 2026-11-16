@@ -1,0 +1,40 @@
+{
+  "project": "Bloom Health & Wellness",
+  "exported_at_utc": "2026-11-14T11:00:32.567991+00:00",
+  "source_commit": "563a659eee0e25cdb8b1a21516345b2fcccea05d",
+  "application_source_changed_for_export": false,
+  "runtime_verified": "Node.js v24.22.1",
+  "backend_status": "Not implemented; current application uses browser-local demonstration persistence.",
+  "tests": {
+    "command": "npm test",
+    "passed": 42,
+    "failed": 0
+  },
+  "build": {
+    "command": "npm run build",
+    "result": "passed",
+    "warning": "Nonblocking minified JavaScript chunk above 500 kB."
+  },
+  "excluded_tracked_files": [
+    ".openai/hosting.json",
+    "docs/bloom-admin-cms.jpg",
+    "docs/bloom-desktop-preview.jpg",
+    "docs/bloom-frontend-complete.jpg",
+    "docs/bloom-responsive-recheck.jpg",
+    "docs/bloom-responsive.jpg"
+  ],
+  "exclusion_reason": "Site-specific deployment configuration and browser QA screenshots are not required for the portable source package. Text and JSON verification records remain included.",
+  "added_handoff_files": [
+    "CLAUDE.md",
+    "START_HERE_TH.md",
+    "PROMPT_FOR_CLAUDE.txt",
+    "docs/HANDOFF_VERIFICATION.md",
+    "SOURCE_VERSION.json",
+    "FILE_MANIFEST.sha256"
+  ],
+  "modified_documentation": [
+    "docs/VERIFICATION.md: screenshot links annotated to reflect their omission from the export."
+  ],
+  "install": "npm ci",
+  "environment_required": false
+}

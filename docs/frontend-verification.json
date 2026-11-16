@@ -1,0 +1,545 @@
+{
+  "date": "2026-11-14",
+  "method": "Desktop browser viewport frames; not physical mobile devices",
+  "pageChecks": [
+    {
+      "route": "orders",
+      "width": 320,
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "orders",
+      "width": 390,
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "orders",
+      "width": 768,
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "orders",
+      "width": 1440,
+      "heading": "คำสั่งซื้อของฉัน",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "nutrition",
+      "width": 320,
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "nutrition",
+      "width": 390,
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "nutrition",
+      "width": 768,
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "nutrition",
+      "width": 1440,
+      "heading": "มื้อดี ๆ เริ่มจากการใส่ใจ",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "exercise",
+      "width": 320,
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "exercise",
+      "width": 390,
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "exercise",
+      "width": 768,
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "exercise",
+      "width": 1440,
+      "heading": "ขยับในจังหวะของคุณ",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "articles",
+      "width": 320,
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "articles",
+      "width": 390,
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "articles",
+      "width": 768,
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "articles",
+      "width": 1440,
+      "heading": "เรื่องเล็ก ๆ ที่ทำให้ทุกวันดีขึ้น",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "home",
+      "width": 320,
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "home",
+      "width": 390,
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "home",
+      "width": 768,
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "home",
+      "width": 1440,
+      "heading": "ดูแลตัวเองในแบบที่เป็นคุณ",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "shop",
+      "width": 320,
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "shop",
+      "width": 390,
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "shop",
+      "width": 768,
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "shop",
+      "width": 1440,
+      "heading": "เลือกสิ่งดี ๆ ให้ตัวเอง",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "account",
+      "width": 320,
+      "heading": "สวัสดี Prim",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "account",
+      "width": 390,
+      "heading": "สวัสดี Prim",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "account",
+      "width": 768,
+      "heading": "สวัสดี Prim",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "account",
+      "width": 1440,
+      "heading": "สวัสดี Prim",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "store?shop=s1",
+      "width": 320,
+      "heading": "Bloom Official",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "store?shop=s1",
+      "width": 390,
+      "heading": "Bloom Official",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "store?shop=s1",
+      "width": 768,
+      "heading": "Bloom Official",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "store?shop=s1",
+      "width": 1440,
+      "heading": "Bloom Official",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "admin?view=reports",
+      "width": 320,
+      "heading": "รายงานยอดขาย.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "admin?view=reports",
+      "width": 390,
+      "heading": "รายงานยอดขาย.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "admin?view=reports",
+      "width": 768,
+      "heading": "รายงานยอดขาย.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "admin?view=reports",
+      "width": 1440,
+      "heading": "รายงานยอดขาย.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "admin?view=members",
+      "width": 320,
+      "heading": "สมาชิก.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "admin?view=members",
+      "width": 390,
+      "heading": "สมาชิก.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "admin?view=members",
+      "width": 768,
+      "heading": "สมาชิก.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "admin?view=members",
+      "width": 1440,
+      "heading": "สมาชิก.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "admin?view=orders",
+      "width": 320,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "admin?view=orders",
+      "width": 390,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "admin?view=orders",
+      "width": 768,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "admin?view=orders",
+      "width": 1440,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "seller?view=products",
+      "width": 320,
+      "heading": "จัดการสินค้า.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "seller?view=products",
+      "width": 390,
+      "heading": "จัดการสินค้า.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "seller?view=products",
+      "width": 768,
+      "heading": "จัดการสินค้า.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "seller?view=products",
+      "width": 1440,
+      "heading": "จัดการสินค้า.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "seller?view=orders",
+      "width": 320,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "seller?view=orders",
+      "width": 390,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "seller?view=orders",
+      "width": 768,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "seller?view=orders",
+      "width": 1440,
+      "heading": "คำสั่งซื้อ.",
+      "inner": 1423,
+      "scroll": 1423
+    },
+    {
+      "route": "seller?view=reports",
+      "width": 320,
+      "heading": "รายงานยอดขาย.",
+      "inner": 303,
+      "scroll": 303
+    },
+    {
+      "route": "seller?view=reports",
+      "width": 390,
+      "heading": "รายงานยอดขาย.",
+      "inner": 373,
+      "scroll": 373
+    },
+    {
+      "route": "seller?view=reports",
+      "width": 768,
+      "heading": "รายงานยอดขาย.",
+      "inner": 751,
+      "scroll": 751
+    },
+    {
+      "route": "seller?view=reports",
+      "width": 1440,
+      "heading": "รายงานยอดขาย.",
+      "inner": 1423,
+      "scroll": 1423
+    }
+  ],
+  "dialogChecks": [
+    {
+      "dialog": "member details",
+      "width": 320,
+      "inner": 294,
+      "scroll": 294
+    },
+    {
+      "dialog": "member details",
+      "width": 390,
+      "inner": 364,
+      "scroll": 364
+    },
+    {
+      "dialog": "member details",
+      "width": 768,
+      "inner": 480,
+      "scroll": 480
+    },
+    {
+      "dialog": "member details",
+      "width": 1440,
+      "inner": 480,
+      "scroll": 480
+    },
+    {
+      "dialog": "product editor",
+      "width": 320,
+      "inner": 279,
+      "scroll": 279
+    },
+    {
+      "dialog": "product editor",
+      "width": 390,
+      "inner": 349,
+      "scroll": 349
+    },
+    {
+      "dialog": "product editor",
+      "width": 768,
+      "inner": 691,
+      "scroll": 691
+    },
+    {
+      "dialog": "product editor",
+      "width": 1440,
+      "inner": 915,
+      "scroll": 915
+    },
+    {
+      "dialog": "product details",
+      "width": 320,
+      "inner": 279,
+      "scroll": 279
+    },
+    {
+      "dialog": "product details",
+      "width": 390,
+      "inner": 349,
+      "scroll": 349
+    },
+    {
+      "dialog": "product details",
+      "width": 768,
+      "inner": 691,
+      "scroll": 691
+    },
+    {
+      "dialog": "product details",
+      "width": 1440,
+      "inner": 915,
+      "scroll": 915
+    },
+    {
+      "dialog": "buyer order details",
+      "width": 320,
+      "inner": 279,
+      "scroll": 279
+    },
+    {
+      "dialog": "buyer order details",
+      "width": 390,
+      "inner": 349,
+      "scroll": 349
+    },
+    {
+      "dialog": "buyer order details",
+      "width": 768,
+      "inner": 465,
+      "scroll": 465
+    },
+    {
+      "dialog": "buyer order details",
+      "width": 1440,
+      "inner": 465,
+      "scroll": 465
+    },
+    {
+      "dialog": "health profile",
+      "width": 320,
+      "inner": 294,
+      "scroll": 294
+    },
+    {
+      "dialog": "health profile",
+      "width": 390,
+      "inner": 364,
+      "scroll": 364
+    },
+    {
+      "dialog": "health profile",
+      "width": 768,
+      "inner": 480,
+      "scroll": 480
+    },
+    {
+      "dialog": "health profile",
+      "width": 1440,
+      "inner": 480,
+      "scroll": 480
+    }
+  ],
+  "browserChecks": {
+    "productCopyRefreshBack": "passed",
+    "orderDeepLinkRefreshBack": "passed",
+    "notificationExactOrder": "passed",
+    "invalidImageRetainsPrevious": "passed",
+    "sameImageRetry": "passed",
+    "paymentCorrectionShipmentReview": "passed",
+    "sellerImageAndDecimalPrice": "passed",
+    "healthProfilePersistenceAndAccountIsolation": "passed",
+    "articleSearchAndMissingLink": "passed",
+    "foreignOrderHidden": "passed",
+    "memberConfirmCancellation": "passed",
+    "reportCsvDownloadedAndVerified": "passed"
+  },
+  "testOrder": {
+    "id": "BL-652654159-F1B5-1",
+    "netMerchandise": 351,
+    "shipping": 40,
+    "total": 391,
+    "tracking": "DEMO-FRONTEND-001"
+  },
+  "automatedTests": {
+    "passed": 42,
+    "failed": 0
+  }
+}
