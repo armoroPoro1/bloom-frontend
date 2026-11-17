@@ -2,7 +2,7 @@ import type {Order, PaymentStatus, Shop} from './types';
 
 export const paymentLabels: Record<PaymentStatus, string> = {
   awaiting_review: 'รอตรวจหลักฐาน', rejected: 'รอแก้ไขหลักฐาน', paid: 'ชำระแล้ว',
-  unpaid: 'ยังไม่ได้ชำระ', refund_pending: 'รอคืนเงินตัวอย่าง', refunded: 'คืนเงินตัวอย่างแล้ว',
+  unpaid: 'ยังไม่ได้ชำระ', refund_pending: 'รอคืนเงิน', refunded: 'คืนเงินแล้ว',
 };
 
 /** Calendar date for the Thai storefront, independent of the browser's timezone. */

@@ -1,3 +1,4 @@
+import {ActionButton} from './ActionFeedback';
 import {useState} from 'react';
 import {ArrowDownToLine, Check, Eye, Search, ShieldCheck, Store, UserRound, XCircle} from 'lucide-react';
 import {useStore} from './store';
@@ -47,7 +48,7 @@ export default function MembersManager() {
   </div></Modal>}
   {changed && <Modal title={changed.blocked ? 'เปิดใช้งานสมาชิกอีกครั้ง' : 'ยืนยันการระงับสมาชิก'} onClose={() => setChangeId(null)}><div className="dash-confirm">
     <p><strong>{changed.name}</strong><br/>{changed.email}</p><p className="dash-muted">{changed.blocked ? 'สมาชิกจะกลับเข้าสู่ระบบและใช้งานบัญชีได้อีกครั้ง' : 'สมาชิกจะเข้าสู่ระบบและทำรายการใหม่ไม่ได้ ประวัติคำสั่งซื้อยังอยู่ และคุณสามารถเปิดใช้งานบัญชีอีกครั้งได้'}</p>
-    <div className="dash-modal-actions"><button className="dash-btn dash-btn-soft" onClick={() => setChangeId(null)}>กลับไป</button><button className={'dash-btn ' + (changed.blocked ? 'dash-btn-primary' : 'dash-btn-danger')} onClick={async () => {if (await setUserBlocked(changed.id, !changed.blocked)) setChangeId(null);}}>{changed.blocked ? 'ยืนยันเปิดใช้งาน' : 'ยืนยันระงับบัญชี'}</button></div>
+    <div className="dash-modal-actions"><button className="dash-btn dash-btn-soft" onClick={() => setChangeId(null)}>กลับไป</button><ActionButton className={'dash-btn ' + (changed.blocked ? 'dash-btn-primary' : 'dash-btn-danger')} onClick={async () => {if (await setUserBlocked(changed.id, !changed.blocked)) setChangeId(null);}}>{changed.blocked ? 'ยืนยันเปิดใช้งาน' : 'ยืนยันระงับบัญชี'}</ActionButton></div>
   </div></Modal>}
   </>;
 }

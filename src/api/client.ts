@@ -1,4 +1,5 @@
 import type { ApiEnvelope, ApiError, AuthResponseDto } from './types';
+import {trackActivity} from '../activity';
 
 const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL as string | undefined) || '/api/v1';
 
@@ -83,11 +84,13 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
 // Share concurrent reads only, scoped to the current session. Never cache writes or Response bodies.
 const pendingReads=new Map<string,Promise<any>>();
 export function apiRequest<T=any>(path:string,options:RequestOptions={}):Promise<T>{
- if((options.method||'GET').toUpperCase()!=='GET'||options.rawResponse||options.signal)return requestOnce<T>(path,options);
+ const read=(options.method||'GET').toUpperCase()==='GET';
+ const request=()=>path==='/visits' ? requestOnce<T>(path,options) : trackActivity(read?'read':'action',()=>requestOnce<T>(path,options));
+ if(!read||options.rawResponse||options.signal)return request();
  const key=JSON.stringify([currentAccessToken,path,options.query,Array.from(new Headers(options.headers).entries())]);
  const pending=pendingReads.get(key);if(pending)return pending;
- const request=requestOnce<T>(path,options).finally(()=>{if(pendingReads.get(key)===request)pendingReads.delete(key);});
- pendingReads.set(key,request);return request;
+ const tracked=request().finally(()=>{if(pendingReads.get(key)===tracked)pendingReads.delete(key);});
+ pendingReads.set(key,tracked);return tracked;
 }
 
 async function requestOnce<T = any>(path: string, options: RequestOptions = {}, retryRateLimit = true): Promise<T> {
@@ -209,6 +212,10 @@ export async function uploadFile(
 }
 
 export async function fetchPrivateBlob(uploadId: string): Promise<Blob> {
+  return trackActivity('read', () => readPrivateBlob(uploadId));
+}
+
+async function readPrivateBlob(uploadId: string): Promise<Blob> {
   const url = `${API_BASE}/uploads/${uploadId}`;
   const headers = new Headers();
   if (currentAccessToken) {
@@ -223,6 +230,10 @@ export async function fetchPrivateBlob(uploadId: string): Promise<Blob> {
 }
 
 export async function downloadFile(path: string, filename: string): Promise<void> {
+  return trackActivity('action', () => saveDownload(path, filename));
+}
+
+async function saveDownload(path: string, filename: string): Promise<void> {
   const url = path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? path : '/' + path}`;
   const headers = new Headers();
   if (currentAccessToken) {

@@ -35,8 +35,8 @@ test('buyer: real store auth, profile, addresses, wishlist, cart, order, passwor
    assert.equal((await f.api.getMyOrders()).orders.find(o=>o.id===ids[0]).items.length,1);
   });
   await t.test('change password rejects old password and accepts new',async()=>{
-   assert.equal(await f.run('changePassword','BloomDemoPass1234!','Local-Test-New-Password-42'),true);
-   assert.equal(await f.run('login','buyer@bloom.example.test','BloomDemoPass1234!'),false);
+   assert.equal(await f.run('changePassword',f.fixturePassword,'Local-Test-New-Password-42'),true);
+   assert.equal(await f.run('login','buyer@bloom.example.test',f.fixturePassword),false);
    assert.equal(await f.run('login','buyer@bloom.example.test','Local-Test-New-Password-42'),true);
   });
   assert.equal(f.requests.some(r=>r.status===429),false);
@@ -49,17 +49,17 @@ test('account switching never merges another account cart or grants a demo role 
   await f.role('buyer');const product=f.current().state.products[0];
   await f.run('addCart',product.id);
   await t.test('direct account switch keeps buyer cart out of seller cart',async()=>{
-   assert.equal(await f.run('login','seller@bloom.example.test','BloomDemoPass1234!'),true);
+   assert.equal(await f.run('login','seller@bloom.example.test',f.fixturePassword),true);
    assert.equal((await f.api.getCart()).length,0);
   });
   await t.test('failed role login does not fall back to local administrator',async()=>{
    const fetch=globalThis.fetch;
    globalThis.fetch=async(url,opts)=>url.endsWith('/auth/login')?Response.json({error:{code:'INTERNAL_ERROR',message:'QA unavailable'}},{status:500}):fetch(url,opts);
-   try{assert.equal(await f.run('setRole','admin'),false);assert.equal(f.current().role,'seller')}finally{globalThis.fetch=fetch}
+   try{assert.equal(await f.run('login','admin@bloom.example.test','invalid-password'),false);assert.equal(f.current().role,'seller')}finally{globalThis.fetch=fetch}
   });
   await t.test('anonymous cart still merges on login',async()=>{
    await f.run('logout');assert.equal(await f.run('addCart',product.id),true);
-   assert.equal(await f.run('login','seller@bloom.example.test','BloomDemoPass1234!'),true);
+   assert.equal(await f.run('login','seller@bloom.example.test',f.fixturePassword),true);
    assert.equal((await f.api.getCart()).find(p=>p.productId===product.id).quantity,1);
   });
  }finally{await f.close()}

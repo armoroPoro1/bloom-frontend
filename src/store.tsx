@@ -24,7 +24,6 @@ import { dataUrlToBlob } from './imageUpload';
 
 type StoreActions = {
   notify: (msg: string) => void;
-  setRole: (role: Role) => Promise<boolean> | boolean;
   addCart: (productId: string, quantity?: number) => Promise<boolean> | boolean;
   updateCart: (productId: string, quantity: number) => Promise<boolean> | boolean;
   toggleWish: (productId: string) => Promise<boolean> | boolean;
@@ -292,7 +291,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [refreshData]);
 
   // Fallback local actions
-  const fallbackActions = createStoreActions(
+  const {setRole: _localRoleSwitch, ...fallbackActions} = createStoreActions(
     () => stateRef.current,
     (next) => {
       setState(next);
@@ -353,25 +352,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       notifications: [],
     }));
     notify('ออกจากระบบแล้ว');
-  };
-
-  const setRole = async (role: Role): Promise<boolean> => {
-    if (role === 'guest') {
-      await logout();
-      return true;
-    }
-    const seedCreds: Record<'user' | 'seller' | 'admin', { email: string; pass: string }> = {
-      user: { email: 'buyer@bloom.example.test', pass: 'BloomDemoPass1234!' },
-      seller: { email: 'seller@bloom.example.test', pass: 'BloomDemoPass1234!' },
-      admin: { email: 'admin@bloom.example.test', pass: 'BloomDemoPass1234!' },
-    };
-    const cred = seedCreds[role];
-    const ok = await login(cred.email, cred.pass);
-    if (!ok) {
-      // Fallback to local role switch if API is down
-      return false;
-    }
-    return true;
   };
 
   const [cartWriter] = useState(() => createCartWriter({
@@ -503,7 +483,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         return createdOrders.map((o) => o.id);
       } catch (err: any) {
         if (err.code === 'PAYMENT_METHOD_DISABLED') {
-          notify('เซิร์ฟเวอร์นี้ปิดการชำระเงินแบบทดลอง กรุณาเลือกแนบสลิป');
+          notify('กรุณาชำระเงินโดยแนบสลิป');
           return [];
         }
         notify(err.message || 'การสั่งซื้อไม่สำเร็จ กรุณาตรวจสอบข้อมูล');
@@ -587,9 +567,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const completeRefund = async (orderId: string): Promise<boolean> => {
     if (apiConnected) {
       try {
-        await api.recordAdminRefund(orderId, 'REFUND-MANUAL', 'บันทึกคืนเงินตัวอย่างเสร็จสิ้น');
+        await api.recordAdminRefund(orderId, 'REFUND-MANUAL', 'บันทึกการคืนเงินเสร็จสิ้น');
         await refreshOrder(orderId);
-        notify('บันทึกคืนเงินตัวอย่างเรียบร้อย');
+        notify('บันทึกการคืนเงินเรียบร้อย');
         return true;
       } catch (err: any) {
         notify(err.message || 'ไม่สามารถบันทึกคืนเงินได้');
@@ -1033,7 +1013,6 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const combinedActions = {
     ...fallbackActions,
     notify,
-    setRole,
     addCart,
     updateCart,
     toggleWish,

@@ -30,3 +30,11 @@
 .storage-warning button{padding:10px 13px;border:1px solid #cfaf7a;border-radius:8px;background:#fffaf0;color:inherit;font:inherit;cursor:pointer;min-height:42px}
 .app-recovery{max-width:640px;margin:12vh auto;padding:32px;line-height:1.8}.app-recovery h1{font-size:30px}.app-recovery p{color:#7f6871}
 @media(max-width:700px){.storage-warning{align-items:flex-start;flex-direction:column;padding:14px}.storage-warning>div:last-child{flex-shrink:1}.app-recovery{padding:24px}.app-recovery h1{font-size:24px}}
+
+/* Shared asynchronous action feedback */
+.action-spinner{display:inline-block;flex:none;width:1em;height:1em;border:2px solid currentColor;border-right-color:transparent;border-radius:50%;vertical-align:middle;animation:bloom-action-spin .75s linear infinite}
+.action-is-pending{cursor:progress}
+.action-is-pending>.action-spinner{margin-inline-end:.35em}
+.operation-progress{position:fixed;z-index:1000;inset:auto 1rem 1rem auto;display:flex;align-items:center;gap:.55rem;padding:.65rem .9rem;border:1px solid #eed8e2;border-radius:999px;background:#fff;color:#8b3154;box-shadow:0 4px 16px #572c431a;font-size:.86rem;pointer-events:none}
+@keyframes bloom-action-spin{to{transform:rotate(360deg)}}
+@media(prefers-reduced-motion:reduce){.action-spinner{animation:none}}

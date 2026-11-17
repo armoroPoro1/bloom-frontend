@@ -1,3 +1,4 @@
+import {randomBytes} from 'node:crypto';
 // No browser is used: minimal hook lifecycle to exercise actual StoreProvider actions.
 // UI layout, DOM events and React scheduling are explicitly outside this harness.
 import {build} from 'esbuild';
@@ -24,7 +25,8 @@ function storage(){const values=new Map();return{getItem:k=>values.get(k)??null,
 export async function fixture(){
  process.chdir(fileURLToPath(new URL('../../Bloom-Backend-Claude-Handoff/',import.meta.url)));
  const f=await createTestApp({allowDevPayments:true});
- await seedDevelopment(f.db,'BloomDemoPass1234!');
+ const fixturePassword=randomBytes(18).toString('hex');
+ await seedDevelopment(f.db,fixturePassword);
  const original={fetch:globalThis.fetch,localStorage:globalThis.localStorage,sessionStorage:globalThis.sessionStorage};
  globalThis.localStorage=storage();globalThis.sessionStorage=storage();mod.clearSession();mod.reset();
  const requests=[];
@@ -37,5 +39,5 @@ export async function fixture(){
  };
  const current=()=>mod.render(mod.StoreProvider);
  await current().refreshData();
- return {...f,api:mod.api,current,requests,async run(name,...args){const result=await current()[name](...args);current();return result},async role(role){await current().logout();await current().login(role+'@bloom.example.test','BloomDemoPass1234!');return current()},async close(){mod.clearSession();Object.assign(globalThis,original);await f.close()}};
+ return {...f,fixturePassword,api:mod.api,current,requests,async run(name,...args){const result=await current()[name](...args);current();return result},async role(role){if(current().user)await current().logout();await current().login(role+'@bloom.example.test',fixturePassword);return current()},async close(){mod.clearSession();Object.assign(globalThis,original);await f.close()}};
 }
