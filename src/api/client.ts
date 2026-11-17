@@ -2,8 +2,13 @@ import type { ApiEnvelope, ApiError, AuthResponseDto } from './types';
 
 const API_BASE = ((import.meta as any).env?.VITE_API_BASE_URL as string | undefined) || '/api/v1';
 
-let currentAccessToken: string | null = null;
-let currentRefreshToken: string | null = null;
+const SESSION_KEY = 'bloom-api-session';
+function readSession(): {accessToken?: string; refreshToken?: string} {
+  try { return JSON.parse(sessionStorage.getItem(SESSION_KEY) || '{}'); } catch { return {}; }
+}
+const savedSession = readSession();
+let currentAccessToken: string | null = savedSession.accessToken || null;
+let currentRefreshToken: string | null = savedSession.refreshToken || null;
 let inFlightRefresh: Promise<string | null> | null = null;
 
 export function getAccessToken(): string | null {
@@ -13,11 +18,14 @@ export function getAccessToken(): string | null {
 export function setSession(accessToken: string | null, refreshToken: string | null) {
   currentAccessToken = accessToken;
   currentRefreshToken = refreshToken;
+  try {
+    if (accessToken && refreshToken) sessionStorage.setItem(SESSION_KEY, JSON.stringify({accessToken, refreshToken}));
+    else sessionStorage.removeItem(SESSION_KEY);
+  } catch { /* Memory-only session when storage is unavailable. */ }
 }
 
 export function clearSession() {
-  currentAccessToken = null;
-  currentRefreshToken = null;
+  setSession(null, null);
   inFlightRefresh = null;
 }
 
@@ -53,8 +61,7 @@ async function refreshAccessToken(): Promise<string | null> {
       }
 
       const json: ApiEnvelope<AuthResponseDto> = await response.json();
-      currentAccessToken = json.data.accessToken;
-      currentRefreshToken = json.data.refreshToken;
+      setSession(json.data.accessToken, json.data.refreshToken);
       return currentAccessToken;
     } catch {
       clearSession();
@@ -73,7 +80,17 @@ export interface RequestOptions extends Omit<RequestInit, 'body'> {
   rawResponse?: boolean;
 }
 
-export async function apiRequest<T = any>(path: string, options: RequestOptions = {}): Promise<T> {
+// Share concurrent reads only, scoped to the current session. Never cache writes or Response bodies.
+const pendingReads=new Map<string,Promise<any>>();
+export function apiRequest<T=any>(path:string,options:RequestOptions={}):Promise<T>{
+ if((options.method||'GET').toUpperCase()!=='GET'||options.rawResponse||options.signal)return requestOnce<T>(path,options);
+ const key=JSON.stringify([currentAccessToken,path,options.query,Array.from(new Headers(options.headers).entries())]);
+ const pending=pendingReads.get(key);if(pending)return pending;
+ const request=requestOnce<T>(path,options).finally(()=>{if(pendingReads.get(key)===request)pendingReads.delete(key);});
+ pendingReads.set(key,request);return request;
+}
+
+async function requestOnce<T = any>(path: string, options: RequestOptions = {}, retryRateLimit = true): Promise<T> {
   let url = path.startsWith('http') ? path : `${API_BASE}${path.startsWith('/') ? path : '/' + path}`;
 
   if (options.query) {
@@ -129,6 +146,18 @@ export async function apiRequest<T = any>(path: string, options: RequestOptions 
       } catch (err: any) {
         throw new ApiClientError('NETWORK_ERROR', 'ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้ กรุณาลองใหม่อีกครั้ง', 0, err);
       }
+    }
+  }
+
+  // Reads may wait for the server's rate-limit window once. Never replay writes.
+  if(response.status===429 && retryRateLimit && (options.method||'GET').toUpperCase()==='GET' && !options.rawResponse){
+    const retryAfter=response.headers.get('Retry-After');
+    const seconds=retryAfter ? Number(retryAfter) : NaN;
+    if(Number.isFinite(seconds) && seconds>=0 && seconds<=60){
+      const token=currentAccessToken;
+      await new Promise(resolve=>setTimeout(resolve,Math.max(1,seconds)*1000));
+      if(token!==currentAccessToken)throw new ApiClientError('SESSION_CHANGED','Session changed; reload this page',401);
+      return requestOnce<T>(path,options,false);
     }
   }
 

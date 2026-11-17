@@ -3,8 +3,8 @@ import assert from 'node:assert/strict';
 import {build} from 'esbuild';
 import {fileURLToPath} from 'node:url';
 const root=fileURLToPath(new URL('../',import.meta.url));
-const compiled=await build({stdin:{contents:"export {seed} from './src/data';export {normalizeState} from './src/domain';export {createStoreActions} from './src/actions';export * from './src/persistence';export * from './src/imageUpload';export {contentError} from './src/contentValidation';",resolveDir:root,loader:'ts'},bundle:true,platform:'node',format:'esm',write:false});
-const {seed,normalizeState,createStoreActions,STATE_KEY,loadLocalState,persistLocalState,imageFileError,hasImageSignature,readImageFile,contentError}=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64'));
+const compiled=await build({stdin:{contents:"export {updateCartItem,getWishlist} from './src/api/services';export {apiRequest,setSession,clearSession} from './src/api/client';export {persistContent,contentPayload} from './src/api/content';export {seed} from './src/data';export {normalizeState} from './src/domain';export {createStoreActions} from './src/actions';export * from './src/persistence';export * from './src/imageUpload';export {contentError} from './src/contentValidation';",resolveDir:root,loader:'ts'},bundle:true,platform:'node',format:'esm',write:false});
+const {apiRequest,setSession,clearSession,persistContent,contentPayload,updateCartItem,getWishlist,seed,normalizeState,createStoreActions,STATE_KEY,loadLocalState,persistLocalState,imageFileError,hasImageSignature,readImageFile,contentError}=await import('data:text/javascript;base64,'+Buffer.from(compiled.outputFiles[0].text).toString('base64'));
 function storage(initial={}){const values=new Map(Object.entries(initial));return{getItem:key=>values.get(key)??null,setItem:(key,value)=>values.set(key,value),values};}
 function harness(){let state=normalizeState(undefined,seed);const notices=[];const actions=createStoreActions(()=>state,s=>{state=s},s=>notices.push(s));return{get state(){return state},actions,notices};}
 
@@ -94,4 +94,66 @@ test('legacy fractional meal portions remain valid when editing unrelated conten
   const original=structuredClone(seed.content);original.mealTemplates[0].entries[0].portions=.75;
   const changed=structuredClone(original);changed.articles[0].title='ชื่อบทความใหม่';
   assert.equal(contentError(changed,original),null);
+});
+
+test('cart retries a concurrent write and reads the returned line item', async ({mock}) => {
+  const line = {productId:'p1', quantity:2};
+  let requests = 0;
+  const calls = mock.method(globalThis, 'fetch', async (url, options) => {
+    assert.equal(url, '/api/v1/me/cart/p1');
+    assert.equal(options.method, 'PUT');
+    assert.deepEqual(JSON.parse(options.body), {quantity:2});
+    return ++requests === 1
+      ? Response.json({error:{code:'CONCURRENT_UPDATE', message:'Retry'}}, {status:409})
+      : Response.json({data:line});
+  });
+  assert.deepEqual(await updateCartItem('p1',2), line);
+  assert.equal(calls.mock.callCount(),2);
+});
+
+test('cart does not retry a product availability conflict', async ({mock}) => {
+  const calls = mock.method(globalThis, 'fetch', async () =>
+    Response.json({error:{code:'PRODUCT_UNAVAILABLE', message:'Unavailable'}}, {status:409}));
+  await assert.rejects(updateCartItem('p1',2), {code:'PRODUCT_UNAVAILABLE'});
+  assert.equal(calls.mock.callCount(),1);
+});
+
+
+test('concurrent GETs share requests but sessions and writes remain isolated',async()=>{
+ const original=globalThis.fetch;let calls=0;let release;
+ globalThis.fetch=async()=>{calls++;await new Promise(r=>release=r);return new Response(JSON.stringify({data:[]}),{headers:{'Content-Type':'application/json'}});};
+ try{setSession('first','refresh');const a=apiRequest('/qa');const b=apiRequest('/qa');assert.equal(calls,1);release();await Promise.all([a,b]);
+ const c=apiRequest('/qa');assert.equal(calls,2);release();await c;
+ const d=apiRequest('/qa');const releaseFirst=release;setSession('second','refresh');const e=apiRequest('/qa');assert.equal(calls,4);releaseFirst();release();await Promise.all([d,e]);
+ }finally{globalThis.fetch=original;clearSession();}
+});
+test('CMS writes only changed records and sends backend article field names',async()=>{
+ const original=globalThis.fetch,calls=[];
+ globalThis.fetch=async(url,options)=>{calls.push({url,method:options.method,body:JSON.parse(options.body||'null')});return new Response(JSON.stringify({data:{}}),{headers:{'Content-Type':'application/json'}});};
+ const before={articles:[{id:'article',title:'Title',subtitle:'',category:'',tag:'',time:'5 min',paras:['Body'],image:'hero',published:true}],foods:[],mealTemplates:[],exerciseTemplates:[]};
+ try{await persistContent(before,structuredClone(before));assert.equal(calls.length,0);const after=structuredClone(before);after.articles[0].published=false;await persistContent(before,after);assert.equal(calls.length,1);assert.equal(calls[0].method,'PATCH');assert.deepEqual(calls[0].body.paras,['Body']);assert.equal(calls[0].body.time,'5 min');assert.equal(calls[0].body.imageId,null);assert.equal(calls[0].body.id,undefined);
+ }finally{globalThis.fetch=original;}
+});
+test('CMS rejection propagates instead of reporting a successful save',async()=>{
+ const original=globalThis.fetch;globalThis.fetch=async()=>new Response(JSON.stringify({error:{code:'FORBIDDEN',message:'Forbidden'}}),{status:403,headers:{'Content-Type':'application/json'}});
+ try{const before={articles:[],foods:[],mealTemplates:[],exerciseTemplates:[]};await assert.rejects(()=>persistContent(before,{...before,foods:[{id:'new',name:'Food',detail:'one',kcal:10,group:'',active:true}]}),/Forbidden/);}finally{globalThis.fetch=original;}
+});
+
+test('429 retries a read once after Retry-After but never replays a write',async()=>{
+ const original=globalThis.fetch;let calls=0;
+ globalThis.fetch=async()=>{calls++;return calls===1?new Response(JSON.stringify({error:{code:'RATE_LIMITED',message:'Wait'}}),{status:429,headers:{'Content-Type':'application/json','Retry-After':'0'}}):new Response(JSON.stringify({data:'ok'}),{headers:{'Content-Type':'application/json'}});};
+ try{assert.equal((await apiRequest('/limited')).data,'ok');assert.equal(calls,2);calls=0;await assert.rejects(()=>apiRequest('/limited',{method:'POST',body:{}}),/Wait/);assert.equal(calls,1);}finally{globalThis.fetch=original;}
+});
+
+
+test('wishlist normalizes productId and loads subsequent pages', async ({mock}) => {
+  const calls = mock.method(globalThis, 'fetch', async url => {
+    const offset = Number(new URL(url, 'http://test').searchParams.get('offset'));
+    const rows = offset === 0 ? Array.from({length:100},(_,i)=>({productId:'p'+i})) : [{productId:'p100'}];
+    return Response.json({data:rows,page:{total:101}});
+  });
+  const rows = await getWishlist();
+  assert.equal(rows.length,101);
+  assert.equal(rows[100].id,'p100');
+  assert.equal(calls.mock.callCount(),2);
 });

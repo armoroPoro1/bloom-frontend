@@ -255,6 +255,8 @@ export interface ReviewDto {
   repliedAt?: string | null;
   createdAt: string;
   updatedAt: string;
+  text?: string;
+  name?: string;
 }
 
 export interface StockMovementDto {
@@ -287,8 +289,8 @@ export interface ArticleDto {
   subtitle: string;
   category: string;
   tag: string;
-  readingTime: string;
-  paragraphs: string[];
+  time: string;
+  paras: string[];
   imageId?: string | null;
   published: boolean;
   createdAt: string;
@@ -329,15 +331,7 @@ export interface ExerciseTemplateDto {
   name: string;
   description: string;
   active: boolean;
-  days: Array<{
-    dayIndex: number;
-    dayName: string;
-    activities: Array<{
-      name: string;
-      minutes: number;
-      activityType: string;
-    }>;
-  }>;
+  days: Array<Array<{id: string; name: string; minutes: number; type: string}>>;
   createdAt: string;
   updatedAt: string;
 }

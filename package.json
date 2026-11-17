@@ -7,6 +7,8 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "test": "node --test tests/*.test.mjs",
+    "test:cart-integration": "npm --prefix ../Bloom-Backend-Claude-Handoff run build && node --test qa/cart.integration.mjs",
+    "test:system-integration": "npm --prefix ../Bloom-Backend-Claude-Handoff run build && node --test qa/system.integration.mjs",
     "preview": "vite preview --host 0.0.0.0"
   },
   "dependencies": {

@@ -1,3 +1,5 @@
+import {createCartWriter} from './api/cart';
+import {loadContent,persistContent} from './api/content';
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { seed } from './data';
 import { actorOf, normalizeState, withBuckets, calculateCart } from './domain';
@@ -5,6 +7,7 @@ import { createStoreActions, type CheckoutInput } from './actions';
 import { loadLocalState, persistLocalState, STATE_KEY, type LoadedState } from './persistence';
 import type { Role, State, User, Product, Shop, Category, Order, OrderStatus, Promotion, Review, Address, CartQuote } from './types';
 import * as api from './api/services';
+import { getAccessToken } from './api/client';
 import { bahtToCents, centsToBaht } from './api/types';
 import {
   adaptUser,
@@ -90,6 +93,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const [storageError, setStorageError] = useState(loaded.error);
   const [readBlocked, setReadBlocked] = useState(loaded.readBlocked);
   const [apiConnected, setApiConnected] = useState(false);
+  const [initialized,setInitialized]=useState(false);
   const [toast, setToast] = useState('');
   const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
@@ -130,13 +134,13 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   // Fetch Public Catalog Data from Backend
   const refreshPublicData = useCallback(async () => {
     try {
-      const [cats, prodsRes, shps, promos, settings, articlesRes] = await Promise.all([
+      const [cats, prodsRes, shps, promos, settings, content] = await Promise.all([
         api.getCategories(),
         api.getProducts({ limit: 100 }),
         api.getShops({ limit: 50 }),
         api.getActivePromotions(),
         api.getSiteSettings().catch(() => null),
-        api.getPublishedArticles({ limit: 50 }).catch(() => ({ articles: [] })),
+        loadContent(),
       ]);
 
       setApiConnected(true);
@@ -151,30 +155,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         promotions: promos.map(adaptPromotion),
         siteTitle: settings?.siteTitle || prev.siteTitle,
         siteNotice: settings?.siteNotice || prev.siteNotice,
-        content: {
-          ...prev.content,
-          articles: articlesRes.articles.map((a) => ({
-            id: a.id,
-            title: a.title,
-            subtitle: a.subtitle,
-            category: a.category,
-            tag: a.tag,
-            time: a.readingTime,
-            image: a.imageId || 'hero',
-            paras: a.paragraphs || [],
-            published: a.published,
-            updatedAt: a.updatedAt,
-          })),
-        },
+        content,
       }));
     } catch (err) {
-      console.warn('API public data fetch failed, using local seed fallback:', err);
-      setApiConnected(false);
+      console.warn('API public data refresh failed:', err);
+      // Keep the last connection mode: transient failures must not enable local-only writes.
+      notify((err as Error).message || 'Unable to refresh catalog');
     }
   }, [setState]);
 
   // Fetch User-Scoped Data from Backend
   const refreshUserData = useCallback(async () => {
+    if (!getAccessToken()) {
+      if (stateRef.current.currentUserId) {
+        setState(prev => ({...prev, currentUserId: null, cart: [], wishlist: [], orders: [], addresses: [], notifications: []}));
+      }
+      return;
+    }
     try {
       const [userDto, shopDto, cartItems, wishlistProds, ordersRes, addresses, notifs] = await Promise.all([
         api.getMe(),
@@ -187,6 +184,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       ]);
 
       const adaptedUser = adaptUser(userDto, shopDto?.id);
+      const ownReviews = (await api.getMyReviews()).map(row => ({...row, userId: adaptedUser.id, userName: adaptedUser.name}));
+      const reviewRows = adaptedUser.role === 'seller' ? [...ownReviews, ...await api.getSellerReviews()] : ownReviews;
+      const managedProducts = adaptedUser.role === 'seller' || adaptedUser.role === 'admin'
+        ? await api.getAllRecords<any>(adaptedUser.role === 'admin' ? '/admin/products' : '/seller/products') : [];
 
       setState((prev) => {
         const nextUsers = prev.users.some((u) => u.id === adaptedUser.id)
@@ -196,6 +197,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         return {
           ...prev,
           currentUserId: adaptedUser.id,
+          shops: shopDto ? [adaptShop(shopDto), ...prev.shops.filter(shop => shop.id !== shopDto.id)] : prev.shops,
+          products: [...managedProducts.map(adaptProduct), ...prev.products.filter(product => !managedProducts.some(row => row.id === product.id))],
+          reviews: [...reviewRows.map(adaptReview), ...prev.reviews.filter(review => !reviewRows.some(row => row.id === review.id))],
           users: nextUsers,
           cart: cartItems.map((c) => ({ productId: c.productId, quantity: c.quantity })),
           wishlist: wishlistProds.map((p) => p.id),
@@ -236,16 +240,18 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           })),
         }));
       } else if (adaptedUser.role === 'admin') {
-        const [adminShops, adminUsers, adminOrders, adminReviews, adminAudit] = await Promise.all([
+        const [adminShops, adminUsers, adminOrders, adminReviews, adminAudit, adminContent, adminPromos, adminCategories] = await Promise.all([
           api.getAdminShops({ limit: 100 }).catch(() => []),
           api.getAdminUsers({ limit: 100 }).catch(() => []),
           api.getAdminOrders({ limit: 100 }).catch(() => ({ orders: [] })),
           api.getAdminReviews().catch(() => []),
           api.getAdminAuditEvents({ limit: 100 }).catch(() => []),
+          loadContent(true), api.getAllRecords<any>('/admin/promotions'), api.getAdminCategories(),
         ]);
         setState((prev) => ({
           ...prev,
           shops: adminShops.map(adaptShop),
+          content: adminContent, promotions: adminPromos.map(adaptPromotion), categories:adminCategories.map(adaptCategory),
           users: [
             ...adminUsers.map((u) => adaptUser(u)),
             ...prev.users.filter((pu) => !adminUsers.some((au) => au.id === pu.id)),
@@ -266,8 +272,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           })),
         }));
       }
-    } catch {
-      // User not logged in or invalid token
+    } catch (error: any) {
+      if (error.status === 401) setState(prev => ({...prev, currentUserId: null, orders: [], addresses: [], notifications: []}));
+      else notify(error.message || 'Unable to load account data');
     }
   }, [setState]);
 
@@ -277,8 +284,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   }, [refreshPublicData, refreshUserData]);
 
   // Initial Load on mount
+  const initialRefreshStarted = useRef(false);
   useEffect(() => {
-    void refreshData();
+    if (initialRefreshStarted.current) return;
+    initialRefreshStarted.current = true;
+    void refreshData().finally(()=>setInitialized(true));
   }, [refreshData]);
 
   // Fallback local actions
@@ -293,10 +303,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
 
   // Authenticated & API-Connected Action Overrides
   const login = async (email: string, password: string): Promise<boolean> => {
+    // Only anonymous items may be merged. Switching authenticated accounts must
+    // never copy the previous buyer's cart into the new account.
+    const guestCart = stateRef.current.currentUserId ? [] : [...stateRef.current.cart];
     try {
       await api.login(email, password);
       // Merge guest cart if items existed
-      const guestCart = stateRef.current.cart;
       if (guestCart.length > 0) {
         try {
           await api.mergeCart(guestCart.map((i) => ({ productId: i.productId, quantity: i.quantity })));
@@ -357,53 +369,38 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     const ok = await login(cred.email, cred.pass);
     if (!ok) {
       // Fallback to local role switch if API is down
-      return fallbackActions.setRole(role);
+      return false;
     }
     return true;
   };
+
+  const [cartWriter] = useState(() => createCartWriter({
+    account: () => stateRef.current.currentUserId,
+    cart: () => stateRef.current.cart,
+    write: api.updateCartItem,
+    apply: item => setState(prev => {
+      const cart = prev.cart.filter(entry => entry.productId !== item.productId);
+      if (item.quantity > 0) cart.push(item);
+      return {...prev, cart};
+    }),
+    error: notify,
+  }));
+  const writeCartQuantity = cartWriter.update;
 
   const addCart = async (productId: string, quantity = 1): Promise<boolean> => {
     if (!Number.isInteger(quantity) || quantity < 1) {
       notify('กรุณาระบุจำนวนสินค้าเป็นจำนวนเต็มบวก');
       return false;
     }
-    const s = stateRef.current;
-    const currentQty = s.cart.find((i) => i.productId === productId)?.quantity || 0;
-    const nextQty = currentQty + quantity;
-
-    if (apiConnected && s.currentUserId) {
-      try {
-        const nextCart = await api.updateCartItem(productId, nextQty);
-        setState((prev) => ({
-          ...prev,
-          cart: nextCart.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-        }));
-        notify('เพิ่มสินค้าในตะกร้าแล้ว');
-        return true;
-      } catch (err: any) {
-        notify(err.message || 'ไม่สามารถเพิ่มสินค้าในตะกร้าได้');
-        return false;
-      }
-    }
-    return fallbackActions.addCart(productId, quantity);
+    if (!apiConnected || !stateRef.current.currentUserId) return fallbackActions.addCart(productId, quantity);
+    const saved = await writeCartQuantity(productId, current => current + quantity);
+    if (saved) notify('\u0e40\u0e1e\u0e34\u0e48\u0e21\u0e2a\u0e34\u0e19\u0e04\u0e49\u0e32\u0e43\u0e19\u0e15\u0e30\u0e01\u0e23\u0e49\u0e32\u0e41\u0e25\u0e49\u0e27');
+    return saved;
   };
 
   const updateCart = async (productId: string, quantity: number): Promise<boolean> => {
-    const s = stateRef.current;
-    if (apiConnected && s.currentUserId) {
-      try {
-        const nextCart = await api.updateCartItem(productId, quantity);
-        setState((prev) => ({
-          ...prev,
-          cart: nextCart.map((i) => ({ productId: i.productId, quantity: i.quantity })),
-        }));
-        return true;
-      } catch (err: any) {
-        notify(err.message || 'ไม่สามารถปรับปรุงตะกร้าได้');
-        return false;
-      }
-    }
-    return fallbackActions.updateCart(productId, quantity);
+    if (!apiConnected || !stateRef.current.currentUserId) return fallbackActions.updateCart(productId, quantity);
+    return writeCartQuantity(productId, () => quantity);
   };
 
   const toggleWish = async (productId: string): Promise<boolean> => {
@@ -434,6 +431,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   };
 
   const checkout = async (input: CheckoutInput): Promise<string[]> => {
+    await cartWriter.idle();
     const s = stateRef.current;
     if (!s.currentUserId) {
       notify('กรุณาเข้าสู่ระบบก่อนสั่งซื้อ');
@@ -500,6 +498,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return fallbackActions.checkout(input);
   };
 
+  const refreshOrder = async (id:string) => {
+    const order=adaptOrder(await api.getOrder(id));
+    setState(prev=>({...prev,orders:[order,...prev.orders.filter(o=>o.id!==id)]}));
+  };
   const updateOrder = async (orderId: string, status: OrderStatus, extra: Partial<Order> = {}): Promise<boolean> => {
     if (apiConnected) {
       try {
@@ -518,7 +520,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         } else if (status === 'paid') {
           await api.reviewPaymentProof(orderId, 'approve');
         }
-        await refreshUserData();
+        await refreshOrder(orderId);
+        if(status==='cancelled')await refreshData();
         notify('อัปเดตคำสั่งซื้อเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -537,7 +540,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.reviewPaymentProof(orderId, 'reject', reason.trim());
-        await refreshUserData();
+        await refreshOrder(orderId);
         notify('ส่งผลการตรวจสอบและแจ้งลูกค้าแล้ว');
         return true;
       } catch (err: any) {
@@ -554,7 +557,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         const blob = dataUrlToBlob(receipt);
         const uploadRes = await api.uploadFile(blob, 'proof', 'slip.webp');
         await api.submitPaymentProof(orderId, uploadRes.id);
-        await refreshUserData();
+        await refreshOrder(orderId);
         notify('ส่งหลักฐานชำระเงินใหม่เรียบร้อยแล้ว');
         return true;
       } catch (err: any) {
@@ -569,7 +572,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.recordAdminRefund(orderId, 'REFUND-MANUAL', 'บันทึกคืนเงินตัวอย่างเสร็จสิ้น');
-        await refreshUserData();
+        await refreshOrder(orderId);
         notify('บันทึกคืนเงินตัวอย่างเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -610,6 +613,23 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     return fallbackActions.suspendShop(shopId, suspended, reason);
   };
 
+  const refreshProducts = async () => {
+    const actor=actorOf(stateRef.current);
+    const [publicRows,managed]=await Promise.all([api.getProducts(),actor?.role==='admin'||actor?.role==='seller'?api.getAllRecords<any>(actor.role==='admin'?'/admin/products':'/seller/products'):Promise.resolve([])]);
+    setState(prev=>({...prev,products:[...managed.map(adaptProduct),...publicRows.products.filter(row=>!managed.some(m=>m.id===row.id)).map(adaptProduct)]}));
+  };
+  const refreshCategories = async () => {const rows=await api.getAdminCategories();setState(prev=>({...prev,categories:rows.map(adaptCategory)}));};
+  const refreshPromotions = async () => {
+    const actor=actorOf(stateRef.current);const rows=await api.getAllRecords<any>(actor?.role==='admin'?'/admin/promotions':'/seller/promotions');
+    setState(prev=>({...prev,promotions:actor?.role==='admin'?rows.map(adaptPromotion):[...rows.map(adaptPromotion),...prev.promotions.filter(p=>p.shopId!==actor?.shopId)]}));
+  };
+  const refreshAddresses = async () => {const rows=await api.getAddresses();setState(prev=>({...prev,addresses:rows.map(adaptAddress)}));};
+  const refreshReviews = async () => {
+    const actor=actorOf(stateRef.current);if(!actor)return;
+    const own=(await api.getMyReviews()).map(row=>({...row,userId:actor.id,userName:actor.name}));
+    const rows=actor.role==='admin'?await api.getAdminReviews():actor.role==='seller'?[...own,...await api.getSellerReviews()]:own;
+    setState(prev=>({...prev,reviews:rows.map(adaptReview)}));
+  };
   const saveShop = async (input: Partial<Shop>): Promise<boolean> => {
     if (apiConnected) {
       try {
@@ -671,12 +691,14 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           imageIndex: input.image != null ? input.image : 0,
         };
 
-        if (isExisting) {
+        if (actorOf(stateRef.current)?.role === 'admin') {
+          await api.saveAdminProduct(isExisting ? input.id : null, isExisting ? payload : {...payload, shopId: input.shopId});
+        } else if (isExisting) {
           await api.updateSellerProduct(input.id, payload);
         } else {
           await api.createSellerProduct(payload);
         }
-        await refreshPublicData();
+        await refreshProducts();
         notify('บันทึกสินค้าเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -690,8 +712,9 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const deleteProduct = async (productId: string): Promise<boolean> => {
     if (apiConnected) {
       try {
-        await api.deleteSellerProduct(productId);
-        await refreshPublicData();
+        if (actorOf(stateRef.current)?.role === 'admin') await api.deleteAdminProduct(productId);
+        else await api.deleteSellerProduct(productId);
+        await refreshProducts();
         notify('นำสินค้าออกจากการจำหน่ายแล้ว');
         return true;
       } catch (err: any) {
@@ -721,7 +744,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
             active: input.active,
           });
         }
-        await refreshPublicData();
+        await refreshCategories();
         notify('บันทึกหมวดหมู่เรียบร้อย');
         return true;
       } catch (err: any) {
@@ -736,7 +759,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.deleteAdminCategory(categoryId);
-        await refreshPublicData();
+        await refreshCategories();
         notify('ลบหมวดหมู่เรียบร้อย');
         return true;
       } catch (err: any) {
@@ -745,6 +768,12 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
       }
     }
     return fallbackActions.deleteCategory(categoryId);
+  };
+
+  const saveContent = async (next: State['content']):Promise<boolean> => {
+    if(user?.role!=='admin'||!apiConnected){notify('Content service unavailable');return false;}
+    try {await persistContent(stateRef.current.content,next);const content=await loadContent(true);setState(prev=>({...prev,content}));notify('Saved');return true;}
+    catch(err:any){notify(err.message||'Unable to save content');try{const content=await loadContent(true);setState(prev=>({...prev,content}));}catch{}return false;}
   };
 
   const savePromotion = async (input: Promotion): Promise<boolean> => {
@@ -763,11 +792,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           usageLimit: input.usageLimit || null,
         };
         if (isExisting) {
-          await api.updateSellerPromotion(input.id, payload);
+          if(user?.role === 'admin')await api.updateAdminPromotion(input.id,{...payload,shopId:input.shopId||null});else await api.updateSellerPromotion(input.id,payload);
         } else {
-          await api.createSellerPromotion(payload);
+          if(user?.role === 'admin')await api.createAdminPromotion({...payload,shopId:input.shopId||null});else await api.createSellerPromotion(payload);
         }
-        await refreshPublicData();
+        await refreshPromotions();
         notify('บันทึกโปรโมชันเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -781,8 +810,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const deletePromotion = async (promotionId: string): Promise<boolean> => {
     if (apiConnected) {
       try {
-        await api.deleteSellerPromotion(promotionId);
-        await refreshPublicData();
+        await (user?.role === 'admin' ? api.deleteAdminPromotion : api.deleteSellerPromotion)(promotionId);
+        await refreshPromotions();
         notify('ลบโปรโมชันเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -797,8 +826,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.submitReview(productId, rating, text);
-        await refreshPublicData();
-        await refreshUserData();
+        await refreshReviews();
+        await refreshProducts();
         notify('ขอบคุณสำหรับรีวิวสินค้า');
         return true;
       } catch (err: any) {
@@ -813,7 +842,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.replyReview(reviewId, text);
-        await refreshData();
+        await refreshReviews();
         notify('บันทึกคำตอบรีวิวแล้ว');
         return true;
       } catch (err: any) {
@@ -828,7 +857,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.moderateReview(reviewId, hidden, reason);
-        await refreshData();
+        await refreshReviews();
+        await refreshProducts();
         notify(hidden ? 'ซ่อนรีวิวเรียบร้อย' : 'แสดงรีวิวเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -842,8 +872,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const saveProfile = async (input: Partial<User>): Promise<boolean> => {
     if (apiConnected) {
       try {
-        await api.updateProfile(input);
-        await refreshUserData();
+        const saved=adaptUser(await api.updateProfile(input),actorOf(stateRef.current)?.shopId);
+        setState(prev=>({...prev,users:prev.users.map(u=>u.id===saved.id?saved:u)}));
         notify('บันทึกข้อมูลส่วนตัวเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -893,7 +923,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         } else {
           await api.createAddress(input);
         }
-        await refreshUserData();
+        await refreshAddresses();
         notify('บันทึกที่อยู่เรียบร้อย');
         return true;
       } catch (err: any) {
@@ -908,7 +938,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     if (apiConnected) {
       try {
         await api.deleteAddress(addressId);
-        await refreshUserData();
+        await refreshAddresses();
         notify('ลบที่อยู่จัดส่งเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -922,8 +952,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const setDefaultAddress = async (addressId: string): Promise<boolean> => {
     if (apiConnected) {
       try {
-        await api.updateAddress(addressId, { isDefault: true });
-        await refreshUserData();
+        const address=stateRef.current.addresses.find(a=>a.id===addressId);
+        if(!address)return false;
+        await api.updateAddress(addressId, {...address,isDefault:true});
+        await refreshAddresses();
         notify('ตั้งเป็นที่อยู่หลักเรียบร้อย');
         return true;
       } catch (err: any) {
@@ -937,8 +969,8 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
   const saveSiteSettings = async (title: string, notice: string): Promise<boolean> => {
     if (apiConnected) {
       try {
-        await api.updateAdminSettings({ siteTitle: title, siteNotice: notice });
-        await refreshPublicData();
+        const saved=await api.updateAdminSettings({ siteTitle: title, siteNotice: notice });
+        setState(prev=>({...prev,siteTitle:saved.siteTitle,siteNotice:saved.siteNotice}));
         notify('บันทึกการตั้งค่าเว็บไซต์แล้ว');
         return true;
       } catch (err: any) {
@@ -960,7 +992,11 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     fallbackActions.markNotificationsRead();
   };
 
+  const lastVisit=useRef({key:'',at:0});
   const recordVisit = (page: any) => {
+    const key=String(stateRef.current.currentUserId)+':'+page;
+    if(lastVisit.current.key===key&&Date.now()-lastVisit.current.at<1000)return;
+    lastVisit.current={key,at:Date.now()};
     if (apiConnected) {
       void api.recordVisit(page);
     }
@@ -999,6 +1035,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     deleteProduct,
     saveCategory,
     deleteCategory,
+    saveContent,
     savePromotion,
     deletePromotion,
     addReview,
@@ -1082,6 +1119,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
                 setReadBlocked(false);
                 readBlockedRef.current = false;
                 try {
+                  localStorage.removeItem(STATE_KEY);
                   localStorage.removeItem('bloom_healthshop_v1');
                   localStorage.removeItem('bloom-healthshop-demo-v1');
                 } catch {}
@@ -1092,7 +1130,7 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           </div>
         </div>
       )}
-      {children}
+      {initialized ? children : <div role="status" style={{padding:48,textAlign:'center'}}>Loading Bloom...</div>}
     </Store.Provider>
   );
 }

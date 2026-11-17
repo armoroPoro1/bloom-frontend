@@ -1,4 +1,4 @@
-import { apiRequest, setSession, clearSession, uploadFile, fetchPrivateBlob, downloadFile } from './client';
+import { ApiClientError, apiRequest, setSession, clearSession, uploadFile, fetchPrivateBlob, downloadFile } from './client';
 import type {
   ApiEnvelope,
   AuthResponseDto,
@@ -122,8 +122,8 @@ export async function getProducts(query: {
   offset?: number;
   sort?: string;
 } = {}): Promise<{ products: ProductDto[]; total?: number }> {
-  const envelope = await apiRequest<ApiEnvelope<ProductDto[]>>('/products', { query });
-  return { products: envelope.data, total: envelope.page?.total };
+  const products = await getAllRecords<ProductDto>('/products', query);
+  return { products, total: products.length };
 }
 
 export async function getProduct(id: string): Promise<ProductDto> {
@@ -176,12 +176,18 @@ export async function getCart(): Promise<CartItemDto[]> {
   return envelope.data;
 }
 
-export async function updateCartItem(productId: string, quantity: number): Promise<CartItemDto[]> {
-  const envelope = await apiRequest<ApiEnvelope<CartItemDto[]>>(`/me/cart/${productId}`, {
-    method: 'PUT',
-    body: { quantity },
-  });
-  return envelope.data;
+export async function updateCartItem(productId: string, quantity: number): Promise<{productId: string; quantity: number}> {
+  for (let attempt = 0; ; attempt++) {
+    try {
+      const envelope = await apiRequest<ApiEnvelope<{productId: string; quantity: number}>>(
+        '/me/cart/' + productId, {method: 'PUT', body: {quantity}},
+      );
+      return envelope.data;
+    } catch (error) {
+      if (attempt >= 2 || !(error instanceof ApiClientError) || error.code !== 'CONCURRENT_UPDATE') throw error;
+      await new Promise(resolve => setTimeout(resolve, 100 * (attempt + 1)));
+    }
+  }
 }
 
 export async function clearCart(): Promise<void> {
@@ -196,9 +202,9 @@ export async function mergeCart(items: Array<{ productId: string; quantity: numb
   return envelope.data;
 }
 
-export async function getWishlist(): Promise<ProductDto[]> {
-  const envelope = await apiRequest<ApiEnvelope<ProductDto[]>>('/me/wishlist');
-  return envelope.data;
+export async function getWishlist(): Promise<Array<{id: string; productId: string}>> {
+  const rows = await getAllRecords<{productId: string}>('/me/wishlist');
+  return rows.map(row => ({...row, id: row.productId}));
 }
 
 export async function addWishlist(productId: string): Promise<void> {
@@ -215,6 +221,9 @@ export async function getAddresses(): Promise<AddressDto[]> {
   return envelope.data;
 }
 
+export function addressPayload(data:{label:string;name:string;phone:string;address:string;isDefault?:boolean}) {
+ return {label:data.label,name:data.name,phone:data.phone,address:data.address,isDefault:data.isDefault??false};
+}
 export async function createAddress(data: {
   label: string;
   name: string;
@@ -224,7 +233,7 @@ export async function createAddress(data: {
 }): Promise<AddressDto> {
   const envelope = await apiRequest<ApiEnvelope<AddressDto>>('/me/addresses', {
     method: 'POST',
-    body: data,
+    body: addressPayload(data),
   });
   return envelope.data;
 }
@@ -232,16 +241,16 @@ export async function createAddress(data: {
 export async function updateAddress(
   id: string,
   data: {
-    label?: string;
-    name?: string;
-    phone?: string;
-    address?: string;
+    label: string;
+    name: string;
+    phone: string;
+    address: string;
     isDefault?: boolean;
   },
 ): Promise<AddressDto> {
   const envelope = await apiRequest<ApiEnvelope<AddressDto>>(`/me/addresses/${id}`, {
     method: 'PUT',
-    body: data,
+    body: addressPayload(data),
   });
   return envelope.data;
 }
@@ -292,8 +301,7 @@ export async function getMyOrders(query: {
   limit?: number;
   offset?: number;
 } = {}): Promise<{ orders: OrderDto[]; total?: number }> {
-  const envelope = await apiRequest<ApiEnvelope<OrderDto[]>>('/me/orders', { query });
-  return { orders: envelope.data, total: envelope.page?.total };
+  return completeOrders('/me/orders', query);
 }
 
 export async function getOrder(id: string): Promise<OrderDto> {
@@ -307,14 +315,14 @@ export async function getOrderPaymentProofs(orderId: string): Promise<PaymentPro
 }
 
 export async function cancelOrder(id: string): Promise<OrderDto> {
-  const envelope = await apiRequest<ApiEnvelope<OrderDto>>(`/orders/${id}/cancel`, { method: 'POST' });
+  const envelope = await apiRequest<ApiEnvelope<OrderDto>>(`/orders/${id}/cancel`, { method: 'POST', body: {reason: 'Order cancelled from Bloom'} });
   return envelope.data;
 }
 
 export async function submitPaymentProof(orderId: string, proofUploadId: string): Promise<OrderDto> {
   const envelope = await apiRequest<ApiEnvelope<OrderDto>>(`/orders/${orderId}/payment-proof`, {
     method: 'POST',
-    body: { proofUploadId },
+    body: { uploadId: proofUploadId },
   });
   return envelope.data;
 }
@@ -454,8 +462,7 @@ export async function getSellerOrders(query: {
   limit?: number;
   offset?: number;
 } = {}): Promise<{ orders: OrderDto[]; total?: number }> {
-  const envelope = await apiRequest<ApiEnvelope<OrderDto[]>>('/seller/orders', { query });
-  return { orders: envelope.data, total: envelope.page?.total };
+  return completeOrders('/seller/orders', query);
 }
 
 export async function prepareOrder(orderId: string): Promise<OrderDto> {
@@ -602,8 +609,7 @@ export async function getAdminOrders(query: {
   limit?: number;
   offset?: number;
 } = {}): Promise<{ orders: OrderDto[]; total?: number }> {
-  const envelope = await apiRequest<ApiEnvelope<OrderDto[]>>('/admin/orders', { query });
-  return { orders: envelope.data, total: envelope.page?.total };
+  return completeOrders('/admin/orders', query);
 }
 
 export async function reviewPaymentProof(orderId: string, decision: 'approve' | 'reject', reason?: string): Promise<OrderDto> {
@@ -987,3 +993,26 @@ export async function deleteAdminExerciseTemplate(id: string): Promise<void> {
 
 // Re-export common upload / blob utils
 export { uploadFile, fetchPrivateBlob, downloadFile };
+
+export async function getAllRecords<T>(path: string, query: Record<string, any> = {}): Promise<T[]> {
+  const rows: T[] = [];
+  for (let offset = 0; ; offset += 100) {
+    const result = await apiRequest<ApiEnvelope<T[]>>(path, {query: {...query, limit: 100, offset}});
+    rows.push(...result.data);
+    if (result.data.length < 100 || (result.page?.total !== undefined && rows.length >= result.page.total)) return rows;
+  }
+}
+async function completeOrders(path: string, query: Record<string, any>): Promise<{orders: OrderDto[]}> {
+  const rows = await getAllRecords<OrderDto>(path, query);
+  const orders: OrderDto[] = [];
+  for (let index = 0; index < rows.length; index += 10) {
+    orders.push(...await Promise.all(rows.slice(index, index + 10).map(row => getOrder(row.id))));
+  }
+  return {orders};
+}
+export async function saveAdminProduct(id: string | null, data: any): Promise<void> {
+  await apiRequest(id ? `/admin/products/${id}` : '/admin/products', {method: id ? 'PATCH' : 'POST', body: data});
+}
+export async function deleteAdminProduct(id: string): Promise<void> {
+  await apiRequest(`/admin/products/${id}`, {method: 'DELETE'});
+}
