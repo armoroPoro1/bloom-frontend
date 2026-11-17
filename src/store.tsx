@@ -443,6 +443,19 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
     }
 
     if (apiConnected) {
+      const name = input.name.trim();
+      const phone = (input.phone ?? '').trim();
+      const address = input.address.trim();
+      if (!input.addressId) {
+        const invalid = !name ? 'กรุณากรอกชื่อผู้รับสินค้า'
+          : phone.length < 6 ? 'กรุณากรอกเบอร์โทรผู้รับอย่างน้อย 6 ตัวอักษร'
+          : address.length < 5 ? 'กรุณากรอกที่อยู่จัดส่งอย่างน้อย 5 ตัวอักษร เช่น บ้านเลขที่ ถนน และเขตหรืออำเภอ'
+          : null;
+        if (invalid) {
+          notify(invalid);
+          return [];
+        }
+      }
       try {
         let proofUploadId: string | undefined = undefined;
         if (input.payment === 'transfer') {
@@ -460,17 +473,16 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
           const existingAddresses = await api.getAddresses();
           const match = existingAddresses.find(
             (a) =>
-              a.address.trim() === input.address.trim() &&
-              a.name.trim() === input.name.trim()
+              a.address.trim() === address && a.name.trim() === name && a.phone.trim() === phone
           );
           if (match) {
             targetAddressId = match.id;
           } else {
             const newAddr = await api.createAddress({
               label: 'ที่อยู่จัดส่ง',
-              name: input.name.trim() || 'ผู้รับสินค้า',
-              phone: (input.phone || s.users.find((u) => u.id === s.currentUserId)?.phone || '0812345678').trim(),
-              address: input.address.trim(),
+              name,
+              phone,
+              address,
               isDefault: existingAddresses.length === 0,
             });
             targetAddressId = newAddr.id;
@@ -490,6 +502,10 @@ export function StoreProvider({ children }: { children: React.ReactNode }) {
         notify('สร้างคำสั่งซื้อเรียบร้อยแล้ว');
         return createdOrders.map((o) => o.id);
       } catch (err: any) {
+        if (err.code === 'PAYMENT_METHOD_DISABLED') {
+          notify('เซิร์ฟเวอร์นี้ปิดการชำระเงินแบบทดลอง กรุณาเลือกแนบสลิป');
+          return [];
+        }
         notify(err.message || 'การสั่งซื้อไม่สำเร็จ กรุณาตรวจสอบข้อมูล');
         return [];
       }

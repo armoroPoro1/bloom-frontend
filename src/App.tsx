@@ -31,7 +31,7 @@ export default function App(){
  const navigate=(p:string)=>{const base=p.split('?')[0] as Page;if(pageList.includes(base)){setPage(base);setRouteCategory(buyerHashQuery(p,'category'));if(base==='store')setStoreId(new URLSearchParams(p.split('?')[1]||'').get('shop')||'');location.hash=p;setMobileMenu(false);window.scrollTo({top:0,behavior:'smooth'})}};
  const openProduct=(p:Product,review=false)=>{setReviewMode(review);setDetailId(p.id);location.hash=buyerHashWith(location.hash,{product:p.id,review:review?'1':null})};
  const closeProduct=()=>{setDetailId('');setReviewMode(false);history.replaceState(null,'','#'+buyerHashWith(location.hash,{product:null,review:null}))};
- const openAuth=(intent:string|null=null)=>{authIntent.current=intent;setAuth('login')};
+ const openAuth=(intent='home')=>{authIntent.current=intent;setAuth('login')};
  const unread=state.notifications.filter(n=>n.userId===user?.id&&!n.read).length;
  useEffect(()=>{recordVisit(page)},[page,user?.id]);
  useEffect(()=>{if(lastUser.current===state.currentUserId)return;lastUser.current=state.currentUserId;closeProduct();setCart(false);setCheckout(false);setNotifications(false);setInfo(null);if(user&&authIntent.current){const next=authIntent.current;authIntent.current=null;setAuth(null);if(next==='checkout')setCheckout(true);else navigate(next)}},[state.currentUserId]);
@@ -53,7 +53,7 @@ export default function App(){
  });
  const cartCount=state.cart.reduce((a,i)=>a+i.quantity,0);
  const demo=(r:Role)=>{setRole(r);navigate(r==='seller'?'seller':r==='admin'?'admin':'home');setDemoExpanded(false)};
- const openAccount=()=>user?navigate('account'):openAuth('account');
+ const openAccount=()=>user?navigate('account'):openAuth();
  const gate=(p:Page)=>{if(!user){openAuth(p);return}navigate(p)};
  const liveDetail=detailId?state.products.find(p=>p.id===detailId):undefined;
  return <>
@@ -64,7 +64,7 @@ export default function App(){
    {page==='shop'&&<Shop category={category} setCategory={selectCategory} search={search} setSearch={setSearch} onOpen={openProduct}/>}
    {page==='wishlist'&&<div className="container page-section"><Breadcrumb title="รายการโปรด" onHome={()=>navigate('home')}/><SectionHeading eyebrow="SAVED WITH LOVE" title="สิ่งดี ๆ ที่คุณเก็บไว้" description="รายการโปรดที่พร้อมกลับมาดูได้ทุกเมื่อ"/><div className="product-grid">{state.products.filter(p=>state.wishlist.includes(p.id)&&productAvailable(state,p)).map(p=><ProductCard key={p.id} product={p} onOpen={openProduct}/>)}</div>{!state.products.some(p=>state.wishlist.includes(p.id)&&productAvailable(state,p))&&<Empty title="ยังไม่มีรายการโปรด" description="แตะรูปหัวใจบนสินค้าที่คุณสนใจ เพื่อเก็บไว้ดูภายหลัง" action={<button className="btn btn-primary" onClick={()=>shop()}>เลือกดูสินค้า<ArrowRight size={17}/></button>}/>}</div>}
    {page==='orders'&&<Orders key={user?.id||'guest'} navigate={navigate} openAuth={()=>openAuth(location.hash.slice(1)||'orders')} onProduct={openProduct}/>}
-   {page==='account'&&<Account key={user?.id||'guest'} navigate={navigate} openAuth={()=>openAuth('account')}/>}
+   {page==='account'&&<Account key={user?.id||'guest'} navigate={navigate} openAuth={()=>openAuth()}/>}
    {page==='apply'&&<ApplyShop openAuth={()=>openAuth('apply')} navigate={navigate}/>}
    {(page==='seller'||page==='admin')&&((page==='admin'&&role==='admin')||(page==='seller'&&role==='seller'&&['approved','suspended'].includes(state.shops.find(s=>s.id===user?.shopId)?.status||''))?<Dashboard mode={page} onHome={()=>navigate('home')}/>:<div className="container page-section"><Empty title={page==='seller'?'ยินดีต้อนรับสู่ Seller Center':'พื้นที่ผู้ดูแลระบบ'} description="เลือกมุมมองตัวอย่างด้านล่างเพื่อทดลองระบบ" action={<button className="btn btn-primary" onClick={()=>demo(page)}>ทดลองเป็น{page==='seller'?'ผู้ขาย':'แอดมิน'}<ArrowRight size={17}/></button>}/></div>)}
    {['nutrition','exercise','articles'].includes(page)&&<Wellness key={user?.id||'guest'} active={page as 'nutrition'|'exercise'|'articles'} onNavigate={navigate}/>}

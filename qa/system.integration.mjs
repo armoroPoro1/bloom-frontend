@@ -22,8 +22,14 @@ test('buyer: real store auth, profile, addresses, wishlist, cart, order, passwor
   await t.test('wishlist add/reload/remove persists',async()=>{assert.equal(await f.run('toggleWish',product.id),true);assert.ok((await f.api.getWishlist()).some(p=>p.id===product.id));await f.current().refreshData();assert.ok(f.current().state.wishlist.includes(product.id));await f.run('toggleWish',product.id);assert.equal((await f.api.getWishlist()).some(p=>p.id===product.id),false)});
   await t.test('cart and checkout hydrate full order details',async()=>{
    assert.deepEqual(await Promise.all([f.run('addCart',product.id),f.run('addCart',product.id)]),[true,true]);
-   const a=f.current().state.addresses[0];
-   const ids=await f.run('checkout',{addressId:a.id,name:a.name,phone:a.phone,address:a.address,payment:'demo',coupon:''});
+   const shipping={name:'QA Buyer',phone:'0812345678',address:'123 Test Checkout Bangkok',coupon:''};
+   for (const payment of ['demo','transfer']) {
+    const before=f.requests.length;
+    assert.deepEqual(await f.run('checkout',{...shipping,address:'dfdo',payment}),[]);
+    assert.match(f.current().toast,/ที่อยู่จัดส่ง/);
+    assert.equal(f.requests.length,before);
+   }
+   const ids=await f.run('checkout',{...shipping,payment:'demo'});
    assert.equal(ids.length,1,f.current().toast);assert.equal(f.current().state.cart.length,0);
    const order=f.current().state.orders.find(o=>o.id===ids[0]);assert.equal(order.items[0].quantity,2);assert.equal(order.buyerId,f.current().user.id);
    assert.equal((await f.api.getMyOrders()).orders.find(o=>o.id===ids[0]).items.length,1);
@@ -135,7 +141,7 @@ test('commerce: transfer proof, approval, shipment, delivery and review',async t
    productId=f.current().state.products.find(p=>p.shopId==='b1000000-0003-4000-8000-000000000001').id;
    assert.equal(await f.run('addCart',productId),true);const a=f.current().state.addresses[0];
    const receipt='data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNk+A8AAQUBAScY42YAAAAASUVORK5CYII=';
-   const ids=await f.run('checkout',{addressId:a.id,name:a.name,phone:a.phone,address:a.address,payment:'transfer',receipt,coupon:''});
+   const ids=await f.run('checkout',{name:a.name,phone:a.phone,address:'72 QA Transfer Bangkok',payment:'transfer',receipt,coupon:''});
    assert.equal(ids.length,1,f.current().toast);orderId=ids[0];assert.equal((await f.api.getOrder(orderId)).paymentStatus,'awaiting_review');
   });
   await f.role('admin');
